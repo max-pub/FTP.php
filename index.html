@@ -1,0 +1,155 @@
+<title>FTP.php</title>
+
+<link href='../style/base.css' rel='stylesheet' type='text/css'>
+<!--<link href='../../GitHub/style/font/josefin.300.css' rel='stylesheet' type='text/css'>-->
+<link href='../style/font/source.code.300.css' rel='stylesheet' type='text/css'>
+
+<script src="../../Polymer/webcomponentsjs/webcomponents-lite.js"></script>
+<link rel="import" href="../../Polymer/polymer/polymer.html">
+
+<link rel="import" href="../../Polymer/json-view/json-view.html">
+<script src="../AJAX.js/AJAX.js"></script>
+
+
+<body>
+    <dom-module id='demo-tag'>
+        <style>
+            json-view {
+                padding: 1px;
+            }
+
+            h4 {
+                margin-bottom: 0;
+            }
+
+            input {
+                font-size: 1em;
+            }
+        </style>
+        <template>
+            <article class='a4'>
+                <h1>FTP.php</h1>
+                <p>
+                    Just 150 lines of code to ease the pain of PHP-FTP-development.
+                    <br/>Plus a REST/JSON interface to that class.
+                    <br/>Play around with the demo below.
+                </p>
+                <a href="https://github.com/max-pub/FTP.php">
+                    <img src="../style/github.source.docs.3.png" />
+                </a>
+                <br/>
+                <br/>
+
+                <h4>Connect</h4>
+                <input value="{{host::input}}" placeholder='host' />
+                <input value="{{user::input}}" placeholder='user' />
+                <input value="{{pass::input}}" placeholder='password' />
+                <button on-click="connect">connect</button>
+                <json-view data="{{status}}"></json-view>
+
+                <h4>List Folders</h4>
+                <input value="{{folder::input}}" placeholder='folder' />
+                <button on-click="ls">ls</button>
+                <json-view data="{{list}}"></json-view>
+
+                <h4>Remove Files &amp; Folders</h4>
+                <input value="{{rm_file::input}}" placeholder='file' />
+                <button on-click="rm">rm</button>
+                <json-view data="{{rm_status}}"></json-view>
+
+                <h4>Move Files &amp; Folders</h4>
+                <input value="{{mv_file_1::input}}" placeholder='source' />
+                <input value="{{mv_file_2::input}}" placeholder='target' />
+                <button on-click="mv">mv</button>
+                <json-view data="{{mv_status}}"></json-view>
+
+                <h4>Create Folder</h4>
+                <input value="{{mkdir_folder::input}}" placeholder='file' />
+                <button on-click="mkdir">mkdir</button>
+                <json-view data="{{mkdir_status}}"></json-view>
+
+                <h4>Load File</h4>
+                <input value="{{mv_file::input}}" placeholder='file' />
+                <button on-click="mv">load</button>
+                <json-view data="{{mv_status}}"></json-view>
+
+                <h4>Save File</h4>
+                <input value="{{mv_file::input}}" placeholder='file' />
+                <button on-click="mv">save</button>
+                <json-view data="{{mv_status}}"></json-view>
+
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <a href="https://github.com/max-pub/json-view" style='float:right;'>
+                    <img src="../style/max.test.2.png" />
+                </a>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+
+            </article>
+        </template>
+        <script>
+            Polymer({
+                is: 'demo-tag',
+                ready: function () {
+                    this.host = 'max.pub';
+                    this.user = 'f00b17d2';
+                    this.pass = '3ccgzGFA39vEtxfT';
+                    //                    this.status = 'connection status';
+                    //                    this.list = 'list of files and folders';
+                    //                    this.rm_status = 'deletion successfull?';
+                    //                    this.mv_status = 'file moved successfully?';
+
+                },
+                mergeParameters: function (dict) {
+                    var con = {
+                        host: this.host,
+                        user: this.user,
+                        pass: this.pass
+                    };
+                    for (var key in dict)
+                        con[key] = dict[key];
+                    return con;
+                },
+
+                connect: function () {
+                    this.status = 'trying to connect to ' + this.host + ' ...';
+                    AJAX.get('FTP.web.php').parameters(this.mergeParameters({
+                        do: 'status'
+                    })).then(function (data) {
+                        this.status = data;
+                    }.bind(this));
+                },
+
+                ls: function () {
+                    this.list = 'loading folder ' + this.folder + ' ...';
+                    AJAX.get('FTP.web.php').parameters(this.mergeParameters({
+                        do: 'list',
+                        folder: this.folder
+                    })).then(function (data) {
+                        this.list = data;
+                    }.bind(this));
+                },
+
+                mkdir: function () {
+                    this.mkdir_status = 'creating folder ' + this.mkdir_folder + ' ...';
+                    AJAX.get('FTP.web.php').parameters(this.mergeParameters({
+                        do: 'mkdir',
+                        name: this.mkdir_folder
+                    })).then(function (data) {
+                        this.mkdir_status = data;
+                    }.bind(this));
+                }
+            });
+        </script>
+    </dom-module>
+
+
+    <demo-tag></demo-tag>
+</body>
